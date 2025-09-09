@@ -1,5 +1,6 @@
 from usuario import verificar_usuario
 
+
 def criar_conta(agencia, numero_conta, usuarios):
     cpf = input("Digite o CPF do usuário (11111111111): ")
     if not (cpf.isdigit() and len(cpf) == 11):

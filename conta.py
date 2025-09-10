@@ -1,5 +1,5 @@
 from usuario import verificar_usuario
-
+from datetime import datetime
 
 def criar_conta(agencia, numero_conta, usuarios):
     cpf = input("Digite o CPF do usuário (11111111111): ")
@@ -54,4 +54,71 @@ def conta_poupanca(agencia, numero_conta, usuarios):
         
     return conta
         
+class Conta:
+    def __init__(self, cliente, numero):
+        self._cliente = cliente
+        self._numero = numero
+        self._agencia = "0001"  
+        self._saldo = 0
+        self._historico = Historico()
+    
+    @classmethod
+    def nova_conta(cls, cliente, numero, agencia):
+        return cls(cliente, numero, agencia)
         
+    @property
+    def saldo(self):
+        return self._saldo
+    
+    @property
+    def numero(self):
+        return self._numero
+    
+    @property
+    def agencia(self):
+        return self._agencia
+    
+    @property
+    def cliente(self):
+        return self._cliente
+    
+    @property
+    def historico(self):
+        return self._historico
+    
+class ContaCorrente(Conta):
+    def __init__(self, cliente, numero, agencia):
+        super().__init__(cliente, numero, agencia)
+        self._limite = 3700
+        self._limite_saques = 5
+        self._numero_saques = 0
+        #self._taxa_manutencao = 7.99
+        #self._cheque_especial = 2000 serão implementados quando houver um banco de dados
+
+class ContaPoupanca(Conta):
+    def __init__(self, cliente, numero, agencia):
+        super().__init__(cliente, numero, agencia)
+        self._limite = 2500
+        self._limite_saques = 3
+        self._numero_saques = 0
+        #self._rendimento = 0.05
+        #self._data_rendimento = None serão implementados quando houver um banco de dados
+
+class Historico:
+    def __init__(self):
+        self._transacoes = []
+        self._data_abertura = datetime.now()
+    
+    @property
+    def transacoes(self):
+        return self._transacoes
+
+    def adicionar_transacao(self, transacao):
+        self._transacoes.append(
+            {
+                "tipo": transacao.__class__.__name__,
+                "valor": transacao.valor,
+                "data": datetime.now().strftime("%d-%m-%Y %H:%M:%s")
+            }
+        )
+    

@@ -121,4 +121,3 @@ class Historico:
                 "data": datetime.now().strftime("%d-%m-%Y %H:%M:%s")
             }
         )
-    

@@ -1,29 +1,31 @@
 from datetime import datetime
+from conta import Conta, ContaCorrente, ContaPoupanca
 
-def depositar(saldo, valor, extrato, /):
+def depositar (conta, valor, /):
     if valor <= 0:
         raise ValueError("Valor do depósito deve ser positivo")
-    saldo += valor
+    conta.saldo += valor
     data_hora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    extrato.append(f"{data_hora} - Depósito de R$ {valor:.2f}")
-    return saldo
+    conta.historico.append(f"{data_hora} - Depósito de R$ {valor:.2f}")
+    return True
 
-def sacar(*, saldo, valor, extrato, limite, numero_saques, limite_saques):
+def sacar(*, conta, valor):
 
     if valor <= 0:
         raise ValueError("Valor do saque deve ser positivo")
-    if valor > limite:
-        raise ValueError(f"Você não pode sacar mais do que R$ {limite} por vez")
-    if valor > saldo:
+    if valor > conta.limite:
+        raise ValueError(f"Você não pode sacar mais do que R$ {conta.limite} por vez")
+    if valor > conta.saldo:
         raise ValueError("Saldo insuficiente")
-    saldo -= valor
+    conta.saldo -= valor
     data_hora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    extrato.append(f"{data_hora} - Saque de R$ {valor:.2f}")
-    return saldo
+    conta.historico.append(f"{data_hora} - Saque de R$ {valor:.2f}")
+    return True
 
-def mostrar_extrato(extrato, saldo):
+def mostrar_extrato(conta):
     print("\n========== EXTRATO ==========")
-    for operacao in extrato:
+    for operacao in conta.historico:
         print(operacao)
-    print(f"\nSaldo atual: R$ {saldo:.2f}")
+    print(f"\nSaldo atual: R$ {conta.saldo:.2f}")
     print("=============================\n")
+

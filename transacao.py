@@ -1,0 +1,43 @@
+from abc import ABC, abstractmethod
+from datetime import datetime
+
+
+
+class Transacao(ABC):
+    def __init__(self, valor):
+        self.valor = valor
+        self.data_hora = datetime.now()
+    
+    @property
+    def valor(self):
+        return self._valor
+    
+    @abstractmethod
+    def registrar(self, conta):
+        pass
+
+class Deposito(Transacao):
+    def __init__(self, valor):
+        super().__init__(valor)
+
+    @property
+    def valor(self):
+        return self._valor
+    
+    def registrar(self, conta):
+        sucesso_transacao = conta.depositar(self.valor)
+        if sucesso_transacao:
+            conta.historico.adicionar_transacao(self)
+
+class Saque(Transacao):
+    def __init__(self, valor):
+        super().__init__(valor)
+    
+    @property
+    def valor(self):
+        return self._valor
+    
+    def registrar(self, conta):
+        sucesso_transacao = conta.sacar(self.valor)
+        if sucesso_transacao:
+            conta.historico.adicionar_transacao(self)

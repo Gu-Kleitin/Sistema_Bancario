@@ -58,6 +58,24 @@ class ContaCorrente(Conta):
         self._numero_saques = 0
         #self._taxa_manutencao = 7.99
         #self._cheque_especial = 2000 serão implementados quando houver um banco de dados
+    
+    def sacar(self, valor):
+        numero_saques = self._numero_saques
+        limite_saques = self._limite_saques
+        
+        if numero_saques >= limite_saques:
+            print("\nOperação falhou! Número máximo de saques atingido.")
+            return False
+            
+        elif valor > self._limite:
+            print(f"Operação falhou! O valor do saque excede o limite de R$ {self._limite:.2f}")
+            return False
+        
+        else:
+            sucesso = super().sacar(valor)
+            if sucesso:
+                self._numero_saques += 1
+            return sucesso
 
 class ContaPoupanca(Conta):
     def __init__(self, cliente, numero, agencia):
@@ -67,6 +85,24 @@ class ContaPoupanca(Conta):
         self._numero_saques = 0
         #self._rendimento = 0.05
         #self._data_rendimento = None serão implementados quando houver um banco de dados
+    
+    def sacar(self, valor):
+        numero_saques = self._numero_saques
+        limite_saques = self._limite_saques
+        
+        if numero_saques >= limite_saques:
+            print("\nOperação falhou! Número máximo de saques atingido.")
+            return False
+            
+        elif valor > self._limite:
+            print(f"\nOperação falhou! O valor do saque excede o limite de R$ {self._limite:.2f}")
+            return False
+
+        else:
+            sucesso = super().sacar(valor)
+            if sucesso:
+                self._numero_saques += 1
+            return sucesso
 
 class Historico:
     def __init__(self):
@@ -139,3 +175,8 @@ def conta_poupanca(agencia, numero_conta, usuarios):
         return nova_conta
     return None
         
+def selecionar_conta(numero_conta, contas):
+    for conta in contas:
+        if conta.numero == numero_conta:
+            return conta
+    return None

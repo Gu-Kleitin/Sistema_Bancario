@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-
-
 class Transacao(ABC):
     def __init__(self, valor):
         self.valor = valor

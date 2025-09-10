@@ -66,4 +66,3 @@ def criar_usuario(usuarios):
         usuarios.append(novo_usuario)
 
         print("===== Usuário criado com sucesso! =====")
-

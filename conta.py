@@ -1,59 +1,6 @@
-from usuario import verificar_usuario
+from usuario import *
 from datetime import datetime
 
-def criar_conta(agencia, numero_conta, usuarios):
-    cpf = input("Digite o CPF do usuário (11111111111): ")
-    if not (cpf.isdigit() and len(cpf) == 11):
-        print("CPF inválido! Digite exatamente 11 números.")
-        return
-    cpf = int(cpf)
-    usuario = verificar_usuario(cpf, usuarios)
-    if usuario:
-        return {"agencia": agencia, "numero_conta": numero_conta, "usuario": usuario}
-    print("Usuário não encontrado, impossível criar conta sem usuário.")
-    return None
-
-def listar_contas(contas):
-    for conta in contas:
-        lista = f"""\
-            Agência:\t{conta['agencia']}
-            C/C:\t{conta['numero_conta']}
-            Titular:\t{conta['usuario']['nome']}
-        """
-        print("=" * 50)
-        print(lista)
-
-def conta_corrente(agencia, numero_conta, usuarios):
-    conta = criar_conta(agencia, numero_conta, usuarios)
-    if conta:
-        conta["tipo"] = "corrente"
-        conta["limite"] = 3700
-        conta["limite_saques"] = 5
-        #conta["limite_transferencias"] = 10
-        conta["saldo"] = 0
-        conta["extrato"] = []
-        conta["numero_saques"] = 0
-        #conta["taxa_manutencao"] = 7.99
-        #conta[cheque_especial"] = 2000
-
-    return conta
-
-def conta_poupanca(agencia, numero_conta, usuarios):
-    conta = criar_conta(agencia, numero_conta, usuarios)
-    if conta:
-        conta["tipo"] = "poupanca"
-        conta["limite"] = 2500
-        conta["limite_saques"] = 3
-        #conta["limite_transferencias"] = 5
-        conta["saldo"] = 0
-        conta["extrato"] = []
-        conta["numero_saques"] = 0
-        #conta["cheque_especial"] = 1000
-        #conta["rendimento"] = 0.05
-        #conta["data_rendimento"] = None
-        
-    return conta
-        
 class Conta:
     def __init__(self, cliente, numero):
         self._cliente = cliente
@@ -86,6 +33,23 @@ class Conta:
     def historico(self):
         return self._historico
     
+    @classmethod
+    def depositar (conta, valor, /):
+        if valor <= 0:
+            raise ValueError("Valor do depósito deve ser positivo")
+        conta.saldo += valor
+        data_hora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        conta.historico.append(f"{data_hora} - Depósito de R$ {valor:.2f}")
+        return True
+
+    @classmethod
+    def mostrar_extrato(self):
+        print("\n========== EXTRATO ==========")
+        for transacao in self.historico.transacoes:
+            print(transacao)
+        print(f"\nSaldo atual: R$ {self.saldo:.2f}")
+        print("=============================\n")
+
 class ContaCorrente(Conta):
     def __init__(self, cliente, numero, agencia):
         super().__init__(cliente, numero, agencia)
@@ -121,3 +85,57 @@ class Historico:
                 "data": datetime.now().strftime("%d-%m-%Y %H:%M:%s")
             }
         )
+
+def criar_conta(agencia, numero_conta, usuarios):
+    print("=== CADASTRO DE CONTA ===")
+    opcao = input("Informe o tipo de usuário (1 - Pessoa Física, 2 - Pessoa Jurídica):")
+    if opcao == "1":
+        cpf = input("Digite o CPF do usuário (11111111111): ")
+        if not (cpf.isdigit() and len(cpf) == 11):
+            print("CPF inválido! Digite exatamente 11 números.")
+            return
+        cpf = int(cpf)
+        usuario_existente = verificar_usuario(cpf, usuarios)
+        if usuario_existente and isinstance(usuario_existente, PessoaFisica):
+            return usuario_existente
+        print("Usuário não encontrado ou não é uma Pessoa Física, impossível criar conta.")
+        return None
+    elif opcao == "2":
+        cnpj = input("Digite o CNPJ do usuário (11111111111111): ")
+        if not (cnpj.isdigit() and len(cnpj) == 14):
+            print("CNPJ inválido! Digite exatamente 14 números.")
+            return
+        cnpj = int(cnpj)
+        usuario_existente = verificar_usuario(cnpj, usuarios)
+        if usuario_existente and isinstance(usuario_existente, PessoaJuridica):
+            return usuario_existente
+        print("Usuário não encontrado ou não é uma Pessoa Jurídica, impossível criar conta.")
+        return None
+
+def listar_contas(contas):
+    for conta in contas:
+        lista = f"""\
+            Agência:\t{conta['agencia']}
+            C/C:\t{conta['numero_conta']}
+            Titular:\t{conta['usuario']['nome']}
+        """
+        print("=" * 50)
+        print(lista)
+
+def conta_corrente(agencia, numero_conta, usuarios):
+    cliente = criar_conta(agencia, numero_conta, usuarios)
+    if cliente:
+        nova_conta = ContaCorrente(cliente=cliente, numero=numero_conta, agencia = agencia)
+        cliente.adicionar_conta(nova_conta)
+        return nova_conta
+
+    return None
+
+def conta_poupanca(agencia, numero_conta, usuarios):
+    cliente = criar_conta(agencia, numero_conta, usuarios)
+    if cliente:
+        nova_conta = ContaPoupanca(cliente=cliente, numero=numero_conta, agencia = agencia)
+        cliente.adicionar_conta(nova_conta)
+        return nova_conta
+    return None
+        

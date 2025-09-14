@@ -3,7 +3,7 @@ from datetime import datetime
 
 class Transacao(ABC):
     def __init__(self, valor):
-        self.valor = valor
+        self._valor = valor
         self.data_hora = datetime.now()
     
     @property

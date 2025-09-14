@@ -2,10 +2,10 @@ from usuario import *
 from datetime import datetime
 
 class Conta:
-    def __init__(self, cliente, numero):
+    def __init__(self, cliente, numero, agencia):
         self._cliente = cliente
         self._numero = numero
-        self._agencia = "0001"  
+        self._agencia = agencia  
         self._saldo = 0
         self._historico = Historico()
     
@@ -131,8 +131,9 @@ def criar_conta(agencia, numero_conta, usuarios):
             print("CPF inválido! Digite exatamente 11 números.")
             return
         cpf = int(cpf)
-        usuario_existente = verificar_usuario(cpf, usuarios)
-        if usuario_existente and isinstance(usuario_existente, PessoaFisica):
+        usuario = verificar_usuario(cpf, usuarios)
+        #and isinstance(usuario, PessoaFisica)
+        if usuario:
             return usuario_existente
         print("Usuário não encontrado ou não é uma Pessoa Física, impossível criar conta.")
         return None
@@ -175,7 +176,7 @@ def conta_poupanca(agencia, numero_conta, usuarios):
         return nova_conta
     return None
         
-def selecionar_conta(numero_conta, contas):
+def selecionar_conta(numero_conta, contas): 
     for conta in contas:
         if conta.numero == numero_conta:
             return conta

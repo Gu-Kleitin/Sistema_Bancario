@@ -31,25 +31,26 @@ def verificar_usuario(documento, usuarios):
     return None
 
 def criar_usuario(usuarios):
-    opcao = input("Informe o tipo de usuário a ser criado (1 - Pessoa Física, 2 - Pessoa Jurídica): ")
+    opcao = input("Informe o tipo de usuário a ser criado (1 - Pessoa Física, 2 - Pessoa Jurídica): ")  
     if opcao == "1":
         cpf = input("Digite o CPF do usuário (somente números): ")
         if not (cpf.isdigit() and len(cpf) == 11):
             print("CPF inválido! Digite exatamente 11 números.")
-            return
+            return None
         cpf = int(cpf)
         usuario_existente = verificar_usuario(cpf, usuarios)
         if usuario_existente:
             print("Já existe um usuário com esse CPF!")
-            return
+            return None
         nome = input("Digite o nome completo: ")
         data_de_nascimento = input("Digite a data de nascimento (dd-mm-aaaa): ")
         endereco = input("Digite o endereço (logradouro, nro - bairro - cidade/sigla estado): ")
 
         novo_usuario = PessoaFisica(nome=nome, data_nascimento=data_de_nascimento, cpf=cpf, endereco=endereco)
         usuarios.append(novo_usuario)
-
         print("===== Usuário criado com sucesso! =====")
+        return novo_usuario
+    
     elif opcao == "2":
         cnpj = input("Digite o CNPJ do usuário (somente números): ")
         if not (cnpj.isdigit() and len(cnpj) == 14):

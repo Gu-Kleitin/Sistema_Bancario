@@ -1,4 +1,4 @@
-import usuario, conta
+import usuario as usuario, conta as conta
 from transacao import Deposito, Saque
 
 menu = """

@@ -1,0 +1,1 @@
+Esta branch está usando uma versão antiga do projeto antes da migração para POO, estou fazendo ela para poder mudar a estrutura do código para POO de uma forma melhor e ir testando o que estou fazendo
